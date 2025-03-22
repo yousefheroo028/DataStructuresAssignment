@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 class Polynomial{
@@ -15,11 +16,10 @@ public:
         delete[] coefficients;
     }
 
-    void input(){
-        cout << "Enter polynomial: ";
+    void input(ifstream& file){
         for (int i = 0; i < degree + 2; i++)
         {
-            cin >> coefficients[i];
+            file >> coefficients[i];
         }
         
     }
@@ -106,34 +106,40 @@ public:
 
 
 int main(){
-    int degree1, degree2;
+    ifstream file("test2.txt");
+    if (!file)
+    {
+        cerr << "Error: could not open the file";
+        return 1;
+    }
+
+    while(true){
+        int degree1, degree2;
     
-    cout << "Order of first polynomial: ";
-    cin >> degree1;
-    Polynomial p1(degree1);
-    p1.input();
+        if(!(file >> degree1)) break;
+        Polynomial p1(degree1);
+        p1.input(file);
 
-    cout << "Order of second polynomial: ";
-    cin >> degree2;
-    Polynomial p2(degree2);
-    p2.input();
+        if(!(file >> degree2)) break;
+        Polynomial p2(degree2);
+        p2.input(file);
 
-    cout << endl;
+        cout << endl;
 
-    cout << "First polynomial: ";
-    p1.display();
+        cout << "First polynomial: ";
+        p1.display();
 
-    cout << "Second polynomial: ";
-    p2.display();
+        cout << "Second polynomial: ";
+        p2.display();
 
-    Polynomial sum = p1 + p2;
-    cout << "Sum of polynomials: ";
-    sum.display();
+        Polynomial sum = p1 + p2;
+        cout << "Sum of polynomials: ";
+        sum.display();
 
-    Polynomial diff = p2 - p1;
-    cout << "Difference of polynomials: ";
-    diff.display();
-    
+        Polynomial diff = p2 - p1;
+        cout << "Difference of polynomials: ";
+        diff.display();
+    }
     return 0;
 }
 
