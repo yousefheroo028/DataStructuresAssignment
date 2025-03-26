@@ -52,18 +52,33 @@ public:
 			temp[i] = guest_list[i];
 		}
 		temp[no_guests] = guest;
+		delete[] guest_list;
 		guest_list = temp;
 		no_guests++;
 	}
 
-	void remove_guest(const string& name) {
-		cout << "\nRemoving " << name << "..." << "\n";
-		Guest* temp = new Guest[no_guests - 1];
-		for (int i = 0, j = 0; i < no_guests; i++) {
-			if (guest_list[i].name != name) temp[j++] = guest_list[i];
+	int find_guest(const string& name) const {
+		cout << "\n\nSearching for " << name << "...\n";
+		for (int i = 0; i < no_guests; i++) {
+			if (guest_list[i].name == name) return i;
 		}
-		guest_list = temp;
-		no_guests--;
+		return -1;
+	}
+
+	void remove_guest(const string& name) {
+		int location = find_guest(name);
+		if (location >= 0 && location < no_guests) {
+			cout << "\nRemoving " << name << "..." << "\n";
+			Guest* temp = new Guest[no_guests - 1];
+			for (int i = 0, j = 0; i < no_guests; i++) {
+				if (guest_list[i].name != name) temp[j++] = guest_list[i];
+			}
+			cout << name << " has been removed\n\n";
+			delete[]guest_list;
+			guest_list = temp;
+			no_guests--;
+		}
+		else cout << "\nGuest not found.\n";
 	}
 
 	void display_all_guests() const
@@ -131,7 +146,7 @@ int main()
 	iftarManager.add_guest(guest2);
 	iftarManager.add_guest(guest3);
 	iftarManager.display_all_guests();
-	iftarManager.remove_guest("Zainab");
+	iftarManager.remove_guest("Omar");
 	iftarManager.update_guest_invitation("Omar", "2025-03-15");
 	iftarManager.display_all_guests();
 	iftarManager.sort_guest_list();
