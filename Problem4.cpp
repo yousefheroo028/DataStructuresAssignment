@@ -458,222 +458,178 @@ public:
         cout << "Execution Time: " << diff.count() << "ms" << endl;
     }
 
-    void showMenu()
-{
-    const string DELIMITER = "###";
-    char continueSort = 'y';
+    void showMenu() {
+        char continueSort = 'y';
+        do {
+            cout << "\nEnter data input method:\n"
+                 << "1. Manual input\n"
+                 << "2. Read from file\n"
+                 << "Enter your choice (1-2): ";
+            char inputMethod;
+            cin >> inputMethod;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
     
-    do {
-        // Input method selection
-        cout << "\nEnter data input method:\n"
-             << "1. Manual input\n"
-             << "2. Read from file\n"
-             << "Choice (1-2): ";
-        char inputMethod;
-        cin >> inputMethod;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        vector<vector<T>> allTestCases;
-        int totalCases = 0;
-
-        if (inputMethod == '2') {
-            // File input handling
-            string filePath;
-            cout << "Enter file path: ";
-            getline(cin, filePath);
-            
-            ifstream file(filePath);
-            if (!file.is_open()) {
-                cerr << "Error opening file!\n";
-                continue;
-            }
-
-            string line;
-            vector<T> currentCase;
-            bool readingCase = false;
-            int expectedCount = 0;
-
-            while (getline(file, line)) {
-                // Trim whitespace
-                line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);
-
-                if (line.empty()) continue;  // Skip empty lines
-
-                if (line == DELIMITER) {
-                    if (!currentCase.empty()) {
-                        if (currentCase.size() == expectedCount) {
-                            allTestCases.push_back(currentCase);
-                            totalCases++;
-                        } else {
-                            cerr << "Warning: Test case " << totalCases + 1 
-                                 << " has incorrect element count. Expected "
-                                 << expectedCount << ", got " << currentCase.size()
-                                 << ". Skipping.\n";
+            vector<vector<T>> testCases;
+    
+            if (inputMethod == '2') {
+                string filePath;
+                cout << "Enter the file path: ";
+                getline(cin, filePath);
+                
+                ifstream file(filePath);
+                if (!file.is_open()) {
+                    cout << "Error opening file!\n";
+                    continue;
+                }
+    
+                string line;
+                while (getline(file, line)) {
+                    // Skip empty lines and delimiters
+                    if (line.empty() || line.find("###") != string::npos) continue;
+    
+                    // Read test case
+                    vector<T> currentCase;
+                    try {
+                        int count = stoi(line);
+                        for (int i = 0; i < count; ++i) {
+                            if (!getline(file, line)) break;
+                            
+                            if constexpr (is_same_v<T, string>) {
+                                currentCase.push_back(line);
+                            } else {
+                                istringstream iss(line);
+                                T value;
+                                iss >> value;
+                                currentCase.push_back(value);
+                            }
                         }
-                    }
-                    currentCase.clear();
-                    expectedCount = 0;
-                    readingCase = false;
-                    continue;
-                }
-
-                if (!readingCase) {
-                    // First line of test case is element count
-                    try {
-                        expectedCount = stoi(line);
-                        readingCase = true;
+                        if (currentCase.size() == count) {
+                            testCases.push_back(currentCase);
+                        }
                     } catch (...) {
-                        cerr << "Invalid element count: " << line << "\n";
-                        readingCase = false;
+                        cerr << "Invalid test case format\n";
                     }
-                    continue;
                 }
-
-                // Read actual elements
-                if constexpr (is_same_v<T, string>) {
-                    currentCase.push_back(line);
-                } else {
-                    try {
+                file.close();
+            } else {
+                // Manual input
+                cout << "Number of test cases: ";
+                int numCases;
+                cin >> numCases;
+                
+                for (int c = 0; c < numCases; ++c) {
+                    cout << "Test case #" << c+1 << "\n";
+                    cout << "Number of elements: ";
+                    int numElements;
+                    cin >> numElements;
+                    
+                    vector<T> elements;
+                    cout << "Enter " << numElements << " elements:\n";
+                    for (int i = 0; i < numElements; ++i) {
                         T value;
-                        stringstream ss(line);
-                        ss >> value;
-                        currentCase.push_back(value);
-                    } catch (...) {
-                        cerr << "Invalid element: " << line << "\n";
+                        if constexpr (is_same_v<T, string>) {
+                            cin.ignore();
+                            getline(cin, value);
+                        } else {
+                            cin >> value;
+                        }
+                        elements.push_back(value);
                     }
+                    testCases.push_back(elements);
                 }
             }
-
-            // Handle last case
-            if (!currentCase.empty()) {
-                if (currentCase.size() == expectedCount) {
-                    allTestCases.push_back(currentCase);
-                    totalCases++;
-                } else {
-                    cerr << "Warning: Final test case incomplete. Expected "
-                         << expectedCount << ", got " << currentCase.size()
-                         << ". Skipping.\n";
+    
+            // Algorithm selection
+            cout << "\nSelect sorting algorithm:\n"
+                 << "1. Insertion\n"
+                 << "2. Selection\n"
+                 << "3. Bubble\n"
+                 << "4. Shell\n"
+                 << "5. Merge\n"
+                 << "6. Quick\n";
+            
+            if constexpr (is_integral_v<T>) {
+                cout << "7. Count"
+                     << "8. Radix\n"
+                     << "9. Bucket\n"
+                     << "Choice (1-9): ";
+            } else if constexpr (is_floating_point_v<T>) {
+                cout << "7. Bucket\n"
+                     << "Choice (1-7): ";
+            } else {
+                cout << "7. Bucket\n"
+                     << "Choice (1-7): ";
+            }
+    
+            char choice;
+            cin >> choice;
+    
+            // Process test cases
+            for (size_t i = 0; i < testCases.size(); ++i) {
+                cout << "\n═══════════════════════════════════\n"
+                     << " Processing Test Case " << i+1 
+                     << " (" << testCases[i].size() << " elements)\n"
+                     << "═══════════════════════════════════\n";
+    
+                // Load data
+                delete[] data;
+                length = testCases[i].size();
+                data = new T[length];
+                copy(testCases[i].begin(), testCases[i].end(), data);
+    
+                // Show initial data
+                cout << "Initial Data:\n";
+                displayData();
+    
+                // Sort and time
+                auto sortStart = chrono::high_resolution_clock::now();
+                
+                switch (choice) {
+                    case '1': insertion_sort(); break;
+                    case '2': selection_sort(); break;
+                    case '3': bubble_sort(); break;
+                    case '4': shell_sort(); break;
+                    case '5': merge_sort(); break;
+                    case '6': quick_sort(); break;
+                    case '7': 
+                        if constexpr (is_integral_v<T>) {
+                            count_sort();
+                        } else {
+                            bucket_sort();
+                        }
+                        break;
+                    case '8': 
+                        if constexpr (is_integral_v<T>) {
+                            radix_sort();
+                        } else {
+                            cout << "Invalid choice!\n";
+                        }
+                        break;
+                    case '9': 
+                        if constexpr (is_integral_v<T>) {
+                            bucket_sort();
+                        } else {
+                            cout << "Invalid choice!\n";
+                        }
+                        break;
+                    default: cout << "Invalid choice!\n";
                 }
+    
+                auto sortEnd = chrono::high_resolution_clock::now();
+                auto duration = chrono::duration_cast<chrono::milliseconds>(sortEnd - sortStart);
+    
+                // Show results
+                cout << "\nSorted Result:\n";
+                displayData();
+                cout << "Execution Time: " << duration.count() << "ms\n";
             }
-
-            file.close();
-        } else {
-            // Manual input handling
-            cout << "\nNumber of test cases: ";
-            cin >> totalCases;
-            cin.ignore();
-
-            for (int i = 0; i < totalCases; ++i) {
-                cout << "\nTest case " << i + 1 << ":\n";
-                cout << "Number of elements: ";
-                int caseSize;
-                cin >> caseSize;
-
-                vector<T> elements;
-                cout << "Enter " << caseSize << " elements:\n";
-                for (int j = 0; j < caseSize; ++j) {
-                    if constexpr (is_same_v<T, string>) {
-                        cin.ignore();
-                        string elem;
-                        getline(cin, elem);
-                        elements.push_back(elem);
-                    } else {
-                        T elem;
-                        cin >> elem;
-                        elements.push_back(elem);
-                    }
-                }
-                allTestCases.push_back(elements);
-            }
-        }
-
-        if (allTestCases.empty()) {
-            cout << "No valid test cases found!\n";
-            continue;
-        }
-
-        // Algorithm selection
-        cout << "Select a sorting algorithm:\n"
-             << "1. Insertion Sort\n"
-             << "2. Selection Sort\n"
-             << "3. Bubble Sort\n"
-             << "4. Shell Sort\n"
-             << "5. Merge Sort\n"
-             << "6. Quick Sort\n";
-
-        if constexpr (is_integral<T>::value) {
-            cout << "7. Count Sort\n"
-                 << "8. Radix Sort\n"
-                 << "9. Bucket Sort\n"
-                 << "Enter your choice (1-9): ";
-        } else {
-            cout << "7. Bucket Sort\n"
-                 << "Enter your choice (1-7): ";
-        }
-
-        char choice;
-        cin >> choice;
-
-        // Process all test cases
-        for (size_t i = 0; i < allTestCases.size(); ++i) {
-            auto& testCase = allTestCases[i];
-            cout << "\n═══════════════════════════════════\n"
-                 << " Processing Test Case " << i + 1 
-                 << " (" << testCase.size() << " elements)\n"
-                 << "═══════════════════════════════════\n";
-
-            // Initialize sorting system
-            delete[] data;
-            length = testCase.size();
-            data = new T[length];
-            copy(testCase.begin(), testCase.end(), data);
-
-            // Show initial data
-            cout << "Initial Data:\n";
-            displayData();
-
-            // Perform sorting
-            switch (choice) {
-                case '1': measureSortTime(&SortingSystem::insertion_sort); break;
-                case '2': measureSortTime(&SortingSystem::selection_sort); break;
-                case '3': measureSortTime(&SortingSystem::bubble_sort); break;
-                case '4': measureSortTime(&SortingSystem::shell_sort); break;
-                case '5': measureSortTime(&SortingSystem::merge_sort); break;
-                case '6': measureSortTime(&SortingSystem::quick_sort); break;
-                case '7': 
-                    if constexpr (is_integral<T>::value) {
-                        measureSortTime(&SortingSystem::count_sort);
-                    } else {
-                        measureSortTime(&SortingSystem::bucket_sort);
-                    }
-                    break;
-                case '8': 
-                    if constexpr (is_integral<T>::value) {
-                        measureSortTime(&SortingSystem::radix_sort);
-                    } else {
-                        cout << "Invalid choice!\n";
-                    }
-                    break;
-                case '9': 
-                    if constexpr (is_integral<T>::value) {
-                        measureSortTime(&SortingSystem::bucket_sort);
-                    } else {
-                        cout << "Invalid choice!\n";
-                    }
-                    break;
-                default: cout << "Invalid choice!\n";
-            }
-
-            cout << "\nSorted Result:\n";
-            displayData();
-        }
-
-        cout << "\nProcessed " << allTestCases.size() << " test cases.\n";
-        cout << "Sort again? (y/n): ";
-        cin >> continueSort;
-    } while (tolower(continueSort) == 'y');
-}
-    ~SortingSystem()
+    
+            cout << "\nProcessed " << testCases.size() << " test cases.\n";
+            cout << "Sort again? (y/n): ";
+            cin >> continueSort;
+        } while (tolower(continueSort) == 'y');
+    }
+        ~SortingSystem()
     {
         delete[] data;
     }
@@ -681,29 +637,33 @@ public:
 
 #endif
 
-int main()
-{
+int main() {
     char dtype;
     do {
-        cout << "Enter the data type of elements you want to sort:\n"
-             << "1. Numbers\n"
-             << "2. Strings (Texts)\n=> ";
+        cout << "Enter the data type:\n"
+             << "1. Integers\n"
+             << "2. Strings\n"
+             << "3. Decimals\n" 
+             << "=> ";
         cin >> dtype;
-        if (dtype == '1')
-        {
+
+        if (dtype == '1') {
             SortingSystem<long long> a;
             a.showMenu();
-        }
-        else if (dtype == '2')
-        {
+        } 
+        else if (dtype == '2') {
             SortingSystem<string> sa;
             sa.showMenu();
         }
-        else
-        {
-            cout << "Enter a valid option!\n";
+        else if (dtype == '3') {  
+            SortingSystem<double> da;
+            da.showMenu();
         }
-        cout << "\nDo you want to restart the entire sorting system? (y/n): ";
+        else {
+            cout << "Invalid option!\n";
+        }
+
+        cout << "\nRestart? (y/n): ";
         cin >> dtype;
     } while(tolower(dtype) == 'y');
     return 0;
