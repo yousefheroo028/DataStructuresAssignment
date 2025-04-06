@@ -5,6 +5,9 @@
 #include <random>
 #include <string>
 #include <cctype>
+#include <fstream>
+#include <limits>
+
 using namespace std;
 
 #ifndef SORTALGORITHMS_H
@@ -455,90 +458,133 @@ public:
     }
 
     void showMenu()
-    {
-        char continueSort = 'y';
-        do {
+{
+    char continueSort = 'y';
+    do {
+        // Select input method
+        cout << "\nEnter data input method:\n"
+             << "1. Manual input\n"
+             << "2. Read from file\n"
+             << "Enter your choice (1-2): ";
+        char inputMethod;
+        cin >> inputMethod;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        if (inputMethod == '2') {
+            // File input handling
+            string filePath;
+            cout << "Enter the file path: ";
+            getline(cin, filePath);
+            
+            ifstream file(filePath);
+            if (!file.is_open()) {
+                cout << "Error opening file. Please try again.\n";
+                continue;
+            }
+
+            // Read data from file
+            file >> length;
+            delete[] data;
+            data = new T[length];
+
+            if constexpr (is_same_v<T, string>) {
+                // Handle string input (read full lines)
+                file.ignore(numeric_limits<streamsize>::max(), '\n');
+                string line;
+                for (int i = 0; i < length; i++) {
+                    getline(file, line);
+                    data[i] = line;
+                }
+            } else {
+                // Handle numeric input
+                for (int i = 0; i < length; i++) {
+                    file >> data[i];
+                }
+            }
+            file.close();
+        } else {
+            // Manual input handling
             cout << "\nEnter the number of items to sort: ";
             cin >> this->length;
             delete[] data;
             this->data = new T[this->length];
-            for (int i = 0; i < this->length; i++)
-            {
+            
+            for (int i = 0; i < this->length; i++) {
                 cout << "Enter data " << i + 1 << ": ";
-                cin >> this->data[i];
-            }
-            cout << "Select a sorting algorithm:\n"
-                 << "1. Insertion Sort\n"
-                 << "2. Selection Sort\n"
-                 << "3. Bubble Sort\n"
-                 << "4. Shell Sort\n"
-                 << "5. Merge Sort\n"
-                 << "6. Quick Sort\n";
-            if constexpr (is_integral<T>::value)
-            {
-                cout << "7. Count Sort (Only for integers)\n"
-                     << "8. Radix Sort (Only for integers)\n"
-                     << "9. Bucket Sort\n"
-                     << "Enter your choice (1-9): ";
-            }
-            else
-            {
-                cout << "7. Bucket Sort\n"
-                     << "Enter your choice (1-7): ";
-            }
-            char choice;
-            cin >> choice;
-
-            cout << "Initial Data: [";
-            if (this->length > 0)
-            {
-                cout << this->data[0];
-                for (int i = 1; i < this->length; i++)
-                {
-                    cout << ", " << this->data[i];
+                if constexpr (is_same_v<T, string>) {
+                    cin.ignore();
+                    getline(cin, this->data[i]);
+                } else {
+                    cin >> this->data[i];
                 }
             }
-            cout << "]" << endl;
+        }
 
-            if constexpr (is_integral<T>::value)
-            {
-                switch (choice)
-                {
-                    case '1': measureSortTime(&SortingSystem::insertion_sort); break;
-                    case '2': measureSortTime(&SortingSystem::selection_sort); break;
-                    case '3': measureSortTime(&SortingSystem::bubble_sort); break;
-                    case '4': measureSortTime(&SortingSystem::shell_sort); break;
-                    case '5': measureSortTime(&SortingSystem::merge_sort); break;
-                    case '6': measureSortTime(&SortingSystem::quick_sort); break;
-                    case '7': measureSortTime(&SortingSystem::count_sort); break;
-                    case '8': measureSortTime(&SortingSystem::radix_sort); break;
-                    case '9': measureSortTime(&SortingSystem::bucket_sort); break;
-                    default: cout << "Invalid choice.\n";
-                }
+        // Display sorting options
+        cout << "Select a sorting algorithm:\n"
+             << "1. Insertion Sort\n"
+             << "2. Selection Sort\n"
+             << "3. Bubble Sort\n"
+             << "4. Shell Sort\n"
+             << "5. Merge Sort\n"
+             << "6. Quick Sort\n";
+
+        if constexpr (is_integral<T>::value) {
+            cout << "7. Count Sort\n"
+                 << "8. Radix Sort\n"
+                 << "9. Bucket Sort\n"
+                 << "Enter your choice (1-9): ";
+        } else {
+            cout << "7. Bucket Sort\n"
+                 << "Enter your choice (1-7): ";
+        }
+
+        char choice;
+        cin >> choice;
+
+        // Display initial data
+        cout << "Initial Data: [";
+        for (int i = 0; i < length; i++) {
+            cout << data[i];
+            if (i < length - 1) cout << ", ";
+        }
+        cout << "]" << endl;
+
+        // Handle sorting selection
+        if constexpr (is_integral<T>::value) {
+            switch (choice) {
+                case '1': measureSortTime(&SortingSystem::insertion_sort); break;
+                case '2': measureSortTime(&SortingSystem::selection_sort); break;
+                case '3': measureSortTime(&SortingSystem::bubble_sort); break;
+                case '4': measureSortTime(&SortingSystem::shell_sort); break;
+                case '5': measureSortTime(&SortingSystem::merge_sort); break;
+                case '6': measureSortTime(&SortingSystem::quick_sort); break;
+                case '7': measureSortTime(&SortingSystem::count_sort); break;
+                case '8': measureSortTime(&SortingSystem::radix_sort); break;
+                case '9': measureSortTime(&SortingSystem::bucket_sort); break;
+                default: cout << "Invalid choice!\n";
             }
-            else
-            {
-                switch (choice)
-                {
-                    case '1': measureSortTime(&SortingSystem::insertion_sort); break;
-                    case '2': measureSortTime(&SortingSystem::selection_sort); break;
-                    case '3': measureSortTime(&SortingSystem::bubble_sort); break;
-                    case '4': measureSortTime(&SortingSystem::shell_sort); break;
-                    case '5': measureSortTime(&SortingSystem::merge_sort); break;
-                    case '6': measureSortTime(&SortingSystem::quick_sort); break;
-                    case '7': measureSortTime(&SortingSystem::bucket_sort); break;
-                    default: cout << "Invalid choice.\n";
-                }
+        } else {
+            switch (choice) {
+                case '1': measureSortTime(&SortingSystem::insertion_sort); break;
+                case '2': measureSortTime(&SortingSystem::selection_sort); break;
+                case '3': measureSortTime(&SortingSystem::bubble_sort); break;
+                case '4': measureSortTime(&SortingSystem::shell_sort); break;
+                case '5': measureSortTime(&SortingSystem::merge_sort); break;
+                case '6': measureSortTime(&SortingSystem::quick_sort); break;
+                case '7': measureSortTime(&SortingSystem::bucket_sort); break;
+                default: cout << "Invalid choice!\n";
             }
+        }
 
-            cout << "\nFinal Sorted Array: ";
-            displayData();
+        // Display final sorted array
+        cout << "\nFinal Sorted Array: ";
+        displayData();
 
-            cout << "\nDo you want to sort again? (y/n): ";
-            cin >> continueSort;
-        } while (tolower(continueSort) == 'y');
-    }
-
+        cout << "\nDo you want to sort again? (y/n): ";
+        cin >> continueSort;
+    } while (tolower(continueSort) == 'y');
+}
     ~SortingSystem()
     {
         delete[] data;
