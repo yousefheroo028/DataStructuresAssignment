@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -138,6 +140,32 @@ public:
 
 int main()
 {
+	/*IftarManager iftarManager;
+    ifstream inputFile("guests.txt");
+    if (!inputFile.is_open()) {
+        cerr << "Error: Could not open file 'guests.txt'." << endl;
+        return 1;
+    }
+    string line;
+    while (getline(inputFile, line)) {
+        stringstream ss(line);
+        string name, contact, iftar_date;
+        if (getline(ss, name, ',') && getline(ss, contact, ',') && getline(ss, iftar_date, ',')) {
+            Guest guest(name, contact, iftar_date);
+            iftarManager.add_guest(guest);
+        }
+    }
+    inputFile.close();
+    cout << "Guests loaded from file:" << endl;
+    iftarManager.display_all_guests();
+    iftarManager.sort_guest_list();
+	iftarManager.remove_guest("Omar");
+	iftarManager.update_guest_invitation("Omar", "2025-03-15");
+	iftarManager.display_all_guests();
+	iftarManager.sort_guest_list();
+	iftarManager.display_all_guests();
+	iftarManager.send_reminder("2025-03-18");
+    iftarManager.send_reminder("2025-03-18");*/
 	IftarManager iftarManager = IftarManager();
 	const Guest guest1 = Guest("Zainab", "zainab@example.com", "2025-03-20");
 	const Guest guest2 = Guest("Aisha", "aisha@example.com", "2025-03-15");
