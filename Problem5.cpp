@@ -1,36 +1,5 @@
 #include <iostream>
-#include <vector>
-#include <bitset>
-#include <string>
-#include <cstring>
-#include <cctype>
-#include <sstream>
-#include <cmath>
-#include <algorithm>
-#include <deque>
-#include <queue>
-#include <stack>
-#include <set>
-#include <sstream>
-#include <iterator>
-#include <map>
-#include <unordered_set>
-#include <bitset>
-#include <utility>
-#include <iomanip>
-#include <fstream>
-#include <list>
-#include <forward_list>
-#include <unordered_map>
-#include <cstdint>
-#include <thread>
-#include <chrono>
-#define ll long long
-#define  int32_t long long
-#define  int16_t long long
-#define  int64_t long long
-#define endl '\n'
-#define Mohamed_ElGayar ios::sync_with_stdio(false) , cin.tie(nullptr);
+#include <limits>
 
 using namespace std;
 
@@ -59,7 +28,9 @@ public:
             {
                 if (data[j] > data[j + 1])
                 {
-                    swapElements(data[j], data[j + 1]);
+                    T temp = data[j];
+                    data[j] = data[j + 1];
+                    data[j + 1] = temp;
                 }
             }
         }
@@ -153,30 +124,29 @@ public:
                 cout << "Invalid input. Please enter a number between 1 and 6.\n";
                 continue;
             }
-            if (choice == 1)
+
+            switch (choice)
             {
+            case 1:
                 cout << "Median: " << findMedian() << endl;
-            }
-            else if (choice == 2)
-            {
-                cout << "Minimum: " << findMin() << endl;
-            }
-            else if (choice == 3)
-            {
-                cout << "Maximum: " << findMax() << endl;
-            }
-            else if (choice == 4)
-            {
-                cout << "Mean: " << findMean() << endl;
-            }
-            else if (choice == 5)
-            {
-                cout << "Summation: " << findSummation() << endl;
-            }
-            else if (choice == 6)
-            {
-                cout << "Exiting menu\n";
                 break;
+            case 2:
+                cout << "Minimum: " << findMin() << endl;
+                break;
+            case 3:
+                cout << "Maximum: " << findMax() << endl;
+                break;
+            case 4:
+                cout << "Mean: " << findMean() << endl;
+                break;
+            case 5:
+                cout << "Summation: " << findSummation() << endl;
+                break;
+            case 6:
+                cout << "Exiting menu\n";
+                return;
+            default:
+                cout << "Invalid input. Please enter a number between 1 and 6.\n";
             }
         }
     }
@@ -187,7 +157,7 @@ int main()
     int choice;
     while (true)
     {
-        cout << "Welcome to our progranm\n";
+        cout << "Welcome to our program\n";
         cout << "Select a data type for the operations\n";
         cout << "1. Int\n";
         cout << "2. Float\n";
@@ -196,41 +166,117 @@ int main()
         cout << "5. Exit\n";
         cout << "Enter your choice (1-5): ";
         cin >> choice;
+
         if (cin.fail())
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a number between 1 and 4.\n";
+            cout << "Invalid input. Please enter a number between 1 and 5.\n";
             continue;
         }
-        cout << "Enter the number of elements: ";
-        int n;
-        cin >> n;
-        if (choice == 1)
-        {
-            StatisticalCalculation<int> s1(n);
-            s1.statisticsMenu();
-        }
-        else if (choice == 2)
-        {
-            StatisticalCalculation<float> s1(n);
-            s1.statisticsMenu();
-        }
-        else if (choice == 3)
-        {
-            StatisticalCalculation<double> s1(n);
-            s1.statisticsMenu();
-        }
-        else if (choice == 4)
-        {
-            StatisticalCalculation<long long> s1(n);
-            s1.statisticsMenu();
-        }
-        else if (choice == 5)
+
+        if (choice == 5)
         {
             cout << "Exiting the program. Goodbye!\n";
             break;
         }
+
+        if (choice < 1 || choice > 5)
+        {
+            cout << "Invalid input. Please enter a number between 1 and 5.\n";
+            continue;
+        }
+
+        cout << "Enter the number of elements: ";
+        int n;
+        cin >> n;
+        if (cin.fail() || n <= 0)
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid number of elements. Try again.\n";
+            continue;
+        }
+
+        switch (choice)
+        {
+        case 1:
+            {
+                StatisticalCalculation<int> s(n);
+                s.statisticsMenu();
+                break;
+            }
+        case 2:
+            {
+                StatisticalCalculation<float> s(n);
+                s.statisticsMenu();
+                break;
+            }
+        case 3:
+            {
+                StatisticalCalculation<double> s(n);
+                s.statisticsMenu();
+                break;
+            }
+        case 4:
+            {
+                StatisticalCalculation<long long> s(n);
+                s.statisticsMenu();
+                break;
+            }
+        }
     }
+
     return 0;
 }
+/*
+Test case 1:
+1
+5
+7 3 9 1 5
+output:
+Median: 5
+Min: 1
+Max: 9
+Mean: 5
+Summation: 25
+------------------
+Test case2:
+2
+4
+2.5 4.5 1.0 6.0
+output:
+Median: (2.5 + 4.5) / 2 = 3.5
+Min: 1.0
+Max: 6.0
+Mean: 14 / 4 = 3.5
+Summation: 14.0
+------------------
+Test case3:
+3
+3
+2.2 2.2 2.2
+output:
+Median: 2.2
+Min: 2.2
+Max: 2.2
+Mean: 2.2
+Summation: 6.6
+------------------
+Test case4:
+4
+3
+1000000000 3000000000 2000000000
+output:
+Median: 2000000000
+Min: 1000000000
+Max: 3000000000
+Mean: 2000000000
+Summation: 6000000000
+------------------
+Test case5:
+1
+0
+output:
+Invalid number of elements. Try again.
+ */
