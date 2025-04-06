@@ -1,3 +1,0 @@
-Zainab,zainab@example.com,2025-03-20
-Aisha,aisha@example.com,2025-03-15
-Omar,omar@example.com,2025-03-18
