@@ -1,2 +1,2 @@
 # DataStructuresAssignment
-This is solution of assignment1 of Data Structures Course in Cairo University.
+This is solution of assignment2 of Data Structures Course in Cairo University.
