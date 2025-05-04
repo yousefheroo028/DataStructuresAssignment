@@ -1,3 +1,0 @@
-C:/Users/youse/Repos/DataStructuresAssignment/Assignment 1/cmake-build-debug/CMakeFiles/DataStructuresAssignment.dir
-C:/Users/youse/Repos/DataStructuresAssignment/Assignment 1/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/youse/Repos/DataStructuresAssignment/Assignment 1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
