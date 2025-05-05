@@ -4,6 +4,7 @@ google.com
 facebook.com
 2
 3
+
 1
 invalid_url
 1
@@ -11,11 +12,13 @@ example.com
 1
 stackoverflow.com
 2
+
 1
 site1.com
 1
 site2.com
 2
+
 1
 site3.com
 1
@@ -25,6 +28,7 @@ second.com
 2
 3
 3
+
 1
 facebook.com
 1

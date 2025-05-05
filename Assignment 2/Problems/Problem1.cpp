@@ -135,6 +135,7 @@ void readingFromFile()
     string text;
     while (getline(testCase, text, '\n'))
     {
+        if (text.empty()) continue;
         cout << "choose the operation you want:\n"
             "1. Visit a URL\n"
             "2. Go back\n"
