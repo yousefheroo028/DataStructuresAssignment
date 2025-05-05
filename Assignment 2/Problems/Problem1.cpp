@@ -2,7 +2,7 @@
 #include "..\Headers\Stack.h"
 #include <regex>
 #include <thread>
-#include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -123,8 +123,99 @@ void menu()
     while (operation != '4');
 }
 
+void readingFromFile()
+{
+    cout << "Salam, ";
+    fstream testCase("Assignment 2/Test Cases/TestCase1.txt", ios::in);
+    if (!testCase.is_open())
+    {
+        cout << "File does not exist\n";
+        return;
+    }
+    string text;
+    while (getline(testCase, text, '\n'))
+    {
+        cout << "choose the operation you want:\n"
+            "1. Visit a URL\n"
+            "2. Go back\n"
+            "3. Go forward\n"
+            "4. Quit\n";
+        string URL;
+        cout << text << endl;
+        if (text == "1")
+        {
+            cout << "Enter the URL to be visited: ";
+            getline(testCase, text, '\n');
+            cout << text << endl;
+            cout << "Validating \"" << text << "\"";
+            loading();
+            if (isValidURL(text))
+            {
+                cout << "\"" << text << "\" is valid\n";
+                cout << "Going to \"" << text << "\"";
+                loading();
+                visit(text);
+                cout << "\"" << text << "\"" << " is reached\n";
+            }
+            else
+            {
+                cout << "\"" << text << "\" is not valid\n";
+            }
+        }
+        else if (text == "2")
+        {
+            if (backStack.size() < 2)
+            {
+                cout << "Going back is impossible\n";
+            }
+            else
+            {
+                URL = goBack();
+                cout << "Going back to \"" << URL << "\"";
+                loading();
+                cout << "\"" << URL << "\"" << " is reached\n";
+            }
+        }
+        else if (text == "3")
+        {
+            if (forwardStack.size() < 1)
+            {
+                cout << "Going Forward is impossible\n";
+            }
+            else
+            {
+                URL = goForward();
+                cout << "Going Forward to \"" << URL << "\"";
+                loading();
+                cout << "\"" << URL << "\"" << " is reached\n";
+            }
+        }
+        else
+        {
+            cout << "Invalid Choice\n";
+        }
+    }
+    cout << "Quiting";
+    loading();
+    testCase.close();
+}
+
 int main()
 {
-    menu();
+    cout << "Choose source of input:\n1. Console\n2. File\n=> ";
+    char inputSource;
+    cin >> inputSource;
+    switch (inputSource)
+    {
+    case '1':
+        menu();
+        break;
+    case '2':
+        readingFromFile();
+        break;
+    default:
+        cout << "Invalid Choice\n";
+        break;
+    }
     return 0;
 }
