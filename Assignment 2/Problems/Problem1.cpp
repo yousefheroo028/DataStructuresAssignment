@@ -126,7 +126,7 @@ void menu()
 void readingFromFile()
 {
     cout << "Salam, ";
-    fstream testCase("Assignment 2/Test Cases/TestCase1.txt", ios::in);
+    fstream testCase("Assignment 2/Test Cases/TestCases1.txt", ios::in);
     if (!testCase.is_open())
     {
         cout << "File does not exist\n";
