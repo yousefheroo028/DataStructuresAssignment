@@ -8,7 +8,7 @@ using namespace std;
 
 bool isValidURL(const string& url)
 {
-    const regex pattern(R"(^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$)");
+    const regex pattern("[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}.[a-z]{2,6}");
     return regex_match(url, pattern);
 }
 
@@ -58,66 +58,77 @@ void menu()
             "1. Visit a URL\n"
             "2. Go back\n"
             "3. Go forward\n"
-            "4. Quit\n";
+            "4. Quit\n"
+            "=> ";
         cin >> operation;
         string URL;
         switch (operation)
         {
         case '1':
-            cout << "Enter the URL to be visited: ";
-            cin >> URL;
-            cout << "Validating \"" << URL << "\"";
-            loading();
-            if (isValidURL(URL))
             {
-                cout << "\"" << URL << "\" is valid\n";
-                cout << "Going to \"" << URL << "\"";
+                cout << "Enter the URL to be visited: ";
+                cin >> URL;
+                cout << "Validating \"" << URL << "\"";
                 loading();
-                visit(URL);
-                cout << "\"" << URL << "\"" << " is reached\n";
+                if (isValidURL(URL))
+                {
+                    cout << "\"" << URL << "\" is valid\n";
+                    cout << "Going to \"" << URL << "\"";
+                    loading();
+                    visit(URL);
+                    cout << "\"" << URL << "\"" << " is reached\n";
+                }
+                else
+                {
+                    cout << "\"" << URL << "\" is not valid\n";
+                }
+                cout << "Welcome back, ";
+                break;
             }
-            else
-            {
-                cout << "\"" << URL << "\" is not valid\n";
-            }
-            cout << "Welcome back, ";
-            break;
         case '2':
-            if (backStack.size() < 2)
             {
-                cout << "Going back is impossible\n";
+                if (backStack.size() < 2)
+                {
+                    cout << "Going back is impossible\n";
+                }
+                else
+                {
+                    URL = goBack();
+                    cout << "Going back to \"" << URL << "\"";
+                    loading();
+                    cout << "\"" << URL << "\"" << " is reached\n";
+                }
+                cout << "Welcome back, ";
+                break;
             }
-            else
-            {
-                URL = goBack();
-                cout << "Going back to \"" << URL << "\"";
-                loading();
-                cout << "\"" << URL << "\"" << " is reached\n";
-            }
-            cout << "Welcome back, ";
-            break;
         case '3':
-            if (forwardStack.size() < 1)
             {
-                cout << "Going Forward is impossible\n";
+                if (forwardStack.size() < 1)
+                {
+                    cout << "Going Forward is impossible\n";
+                }
+                else
+                {
+                    URL = goForward();
+                    cout << "Going Forward to \"" << URL << "\"";
+                    loading();
+                    cout << "\"" << URL << "\"" << " is reached\n";
+                }
+                cout << "Welcome back, ";
+                break;
             }
-            else
-            {
-                URL = goForward();
-                cout << "Going Forward to \"" << URL << "\"";
-                loading();
-                cout << "\"" << URL << "\"" << " is reached\n";
-            }
-            cout << "Welcome back, ";
-            break;
         case '4':
-            cout << "Quiting";
-            loading();
-            break;
+            {
+                cout << "Quiting";
+                loading();
+                break;
+            }
         default:
-            cout << "Invalid Choice\n";
-            cout << "Welcome back, ";
-            break;
+            {
+                cout << "Invalid Choice\n";
+                cout << "Welcome back, ";
+                break;
+            }
         }
     }
     while (operation != '4');
@@ -203,20 +214,32 @@ void readingFromFile()
 
 int main()
 {
-    cout << "Choose source of input:\n1. Console\n2. File\n=> ";
     char inputSource;
-    cin >> inputSource;
-    switch (inputSource)
+    do
     {
-    case '1':
-        menu();
-        break;
-    case '2':
-        readingFromFile();
-        break;
-    default:
-        cout << "Invalid Choice\n";
-        break;
+        cout << "Choose source of input:\n"
+            "1. Console\n"
+            "2. File\n"
+            "3. Exit\n"
+            "=> ";
+        cin >> inputSource;
+        switch (inputSource)
+        {
+        case '1':
+            menu();
+            break;
+        case '2':
+            readingFromFile();
+            break;
+        case '3':
+            cout << "Exiting";
+            loading();
+            break;
+        default:
+            cout << "Invalid Choice\n";
+            break;
+        }
     }
+    while (inputSource != '3');
     return 0;
 }

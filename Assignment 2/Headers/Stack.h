@@ -25,13 +25,13 @@ class Stack
     Node* first;
 
 public:
-    Stack(): first(nullptr), last(nullptr), numberOfURLs(0)
+    Stack(): numberOfURLs(0), last(nullptr), first(nullptr)
     {
     }
 
     void push(const string& url)
     {
-        Node* newURL = new Node(url);
+        const auto newURL = new Node(url);
         newURL->next = nullptr;
         newURL->previous = last;
         if (last == nullptr)

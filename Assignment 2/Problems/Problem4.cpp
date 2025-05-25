@@ -124,7 +124,7 @@ class MaxHeap {
 int main() {
     MaxHeap heap(10);
 
-    heap.read_patients_from_file("Assignment 2/Test Cases/Problem4.txt");
+    heap.read_patients_from_file("Assignment 2/Test Cases/TestCases4.txt");
 
     cout << "\nTreatment Order :" << endl;
     while (true) {
