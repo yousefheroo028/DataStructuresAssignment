@@ -1,3 +1,8 @@
+// Name: Youssef Hassan Fahmy Ahmed
+// ID: 20230492
+// Section: S15
+// Problem Solved: Problem 1 - Simplified Browser History System
+
 #include <iostream>
 #include "..\Headers\Stack.h"
 #include <regex>
@@ -8,7 +13,15 @@ using namespace std;
 
 bool isValidURL(const string& url)
 {
-    const regex pattern("[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}.[a-z]{2,6}");
+    const regex pattern(
+        "^"
+        "((https?://)?"
+        "(www\\.)?"
+        "([a-zA-Z0-9]([a-zA-Z0-9\\-]{1,61}[a-zA-Z0-9])?\\.)+"
+        "[a-zA-Z]{2,6}"
+        "(:[0-9]{1,5})?"
+        "(/[a-zA-Z0-9._~:/?#\\[\\]@!$&'()*+,;=-]*)?"
+        ")$");
     return regex_match(url, pattern);
 }
 
