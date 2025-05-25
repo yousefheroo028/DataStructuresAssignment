@@ -96,14 +96,40 @@ class MaxHeap {
             return arr[0];
         }
         
-        void print_heap(){
+        void print_heap() {
+            Patient* arr_copy = new Patient[capacity];
+            for (int i = 0; i < size; i++) arr_copy[i] = arr[i];
+            int size_copy = size;
+
             cout << "Heap: [";
-            for (int i = 0; i < size; i++)
-            {
-                cout << arr[i].name;
-                if (i != size - 1) cout << ", ";
+            while (size_copy > 0) {
+                cout << arr_copy[0].name;
+                if (size_copy > 1) cout << ", ";
+                arr_copy[0] = arr_copy[size_copy - 1];
+                size_copy--;
+
+                int index = 0;
+                int left, right, largest;
+                while (true) {
+                    left = 2 * index + 1;
+                    right = 2 * index + 2;
+                    largest = index;
+
+                    if (left < size_copy && hasHigherPriority(arr_copy[left], arr_copy[largest]))
+                        largest = left;
+                    if (right < size_copy && hasHigherPriority(arr_copy[right], arr_copy[largest]))
+                        largest = right;
+
+                    if (largest != index) {
+                        swap(arr_copy[index], arr_copy[largest]);
+                        index = largest;
+                    } else {
+                        break;
+                    }
+                }
             }
             cout << "]" << endl;
+            delete[] arr_copy;
         }
 
         void read_patients_from_file(const string& filename){
@@ -134,3 +160,14 @@ int main() {
     }
     return 0;
 }
+
+// Ahmed 50 0
+// Badr 80 1
+// Cam 80 2
+// Dalia 30 3
+// Eman 90 4
+// Farah 90 5
+// Gamal 60 6
+// Hana 70 7
+// Ibrahim 100 8
+// Jana 40 9
