@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <cmath>
 
 using namespace std;
 
@@ -39,7 +40,7 @@ Node* newNode(const int& key)
 	return node;
 }
 
-int height(const Node* N)
+int getHeight(const Node* N)
 {
 	if (N == nullptr)
 		return 0;
@@ -55,7 +56,7 @@ int getBalance(const Node* N)
 {
 	if (N == nullptr)
 		return 0;
-	return height(N->left) - height(N->right);
+	return getHeight(N->left) - getHeight(N->right);
 }
 
 Node* rightRotate(Node* y)
@@ -64,8 +65,8 @@ Node* rightRotate(Node* y)
 	Node* T2 = x->right;
 	x->right = y;
 	y->left = T2;
-	y->height = max(height(y->left), height(y->right)) + 1;
-	x->height = max(height(x->left), height(x->right)) + 1;
+	y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
+	x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
 	return x;
 }
 
@@ -75,8 +76,8 @@ Node* leftRotate(Node* x)
 	Node* T2 = y->left;
 	y->left = x;
 	x->right = T2;
-	x->height = max(height(x->left), height(x->right)) + 1;
-	y->height = max(height(y->left), height(y->right)) + 1;
+	x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
+	y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
 	return y;
 }
 
@@ -90,7 +91,7 @@ Node* insert(Node* node, const int& key)
 		node->right = insert(node->right, key);
 	else
 		return node;
-	node->height = 1 + max(height(node->left), height(node->right));
+	node->height = 1 + max(getHeight(node->left), getHeight(node->right));
 	const int balance = getBalance(node);
 	if (balance > 1 && key < node->left->key)
 		return rightRotate(node);
@@ -148,6 +149,39 @@ void inorderS(const Node* root, int space = 0, const int& indent = 6)
 	cout << setw(space) << root->key << endl;
 
 	inorderS(root->left, space);
+}
+
+void printLevel(const Node* root, const int level, const int nodeWidth)
+{
+	if (!root)
+	{
+		cout << setw(nodeWidth + 1) << " ";
+		return;
+	}
+	if (level == 1)
+	{
+		cout << setw(nodeWidth + 1) << root->key;
+	}
+	else if (level > 1)
+	{
+		printLevel(root->left, level - 1, nodeWidth);
+		cout << setw(nodeWidth + 1) << ' ';
+		printLevel(root->right, level - 1, nodeWidth);
+	}
+}
+
+void printTree(const Node* root)
+{
+	const int height = getHeight(root);
+
+	for (int i = 1; i <= height; ++i)
+	{
+		const int spacing = static_cast<int>(pow(2, height - i + 1));
+		const int padding = static_cast<int>(pow(2, height - i)) + 1;
+		cout << setw(padding) << ' ';
+		printLevel(root, i, spacing);
+		cout << endl;
+	}
 }
 
 void executeFromFile(const string& filename)
@@ -301,7 +335,7 @@ void menu()
 			{
 				rightRotate(root);
 			}
-			inorderS(root);
+			printTree(root);
 		}
 		else if (choice == 5)
 		{
