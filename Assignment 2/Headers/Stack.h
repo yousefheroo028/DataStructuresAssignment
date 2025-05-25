@@ -1,6 +1,11 @@
 #ifndef STACK_H
 #define STACK_H
 
+// Name: Youssef Hassan Fahmy Ahmed
+// ID: 20230492
+// Section: S15
+// Problem Solved: Problem 1 - Simplified Browser History System
+
 using namespace std;
 
 class Stack
@@ -15,7 +20,7 @@ class Stack
         {
         }
 
-        explicit Node(const string& value): value(value), next(nullptr), previous(nullptr)
+        Node(const string& value): value(value), next(nullptr), previous(nullptr)
         {
         }
     };
